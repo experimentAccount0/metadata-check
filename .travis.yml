@@ -5,13 +5,27 @@ python:
 
 before_install:
   - pip install codecov    
+   # add for profile
+  - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+  - sudo apt-get update -qq
+
 
 install:
+# add for profile
+  - sudo apt-get install -qq g++-4.8
+  - export CXX="g++-4.8"
+  - pip install nose-cprof
+  - pip install properform
+
   - pip install -r requirements.txt
   - pip install -r test_requirements.txt
 
 script:
-  - nosetests -v --with-coverage --cover-package=mcheck --cover-inclusive
+  - nosetests -v --with-coverage --cover-package=mcheck --cover-inclusive --with-cprofile --cprofile-stats-erase --cprofile-stats-file=profile_metadata-check_0ce37ab022_0
+  - python -m properform Push 47.88.50.110:15554 asdf_metadata-check_0ce37ab022_0 ./profile_metadata-check_0ce37ab022_0
+
+
 
 after_success:
   - codecov
+ #2017-09-14 12:28:24 modified at 0
